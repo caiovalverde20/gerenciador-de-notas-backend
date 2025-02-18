@@ -72,6 +72,7 @@ describe('Note (e2e)', () => {
       expect(res.body).toHaveProperty('_id');
       expect(res.body.title).toEqual(noteData.title);
       expect(res.body.description).toEqual(noteData.description);
+      expect(res.body.favorite).toEqual(false);
     });
 
     it('não deve criar nota com título em branco', async () => {
@@ -188,6 +189,43 @@ describe('Note (e2e)', () => {
       it('deve retornar 404 para id inválido ao excluir', async () => {
         await request(app.getHttpServer())
           .delete('/notes/1')
+          .set('Authorization', `Bearer ${token}`)
+          .expect(404);
+      });
+    });
+
+    describe('POST /notes/:id/favorite', () => {
+      it('deve alternar o status de favorito (de false para true)', async () => {
+        const res1 = await request(app.getHttpServer())
+          .post(`/notes/${noteId}/favorite`)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(201);
+        expect(res1.body.favorite).toEqual(true);
+      });
+
+      it('deve alternar o status de favorito (de true para false)', async () => {
+        await request(app.getHttpServer())
+          .post(`/notes/${noteId}/favorite`)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(201);
+        const res2 = await request(app.getHttpServer())
+          .post(`/notes/${noteId}/favorite`)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(201);
+        expect(res2.body.favorite).toEqual(false);
+      });
+
+      it('deve retornar 404 para id inválido ao alternar favorito', async () => {
+        await request(app.getHttpServer())
+          .post('/notes/1/favorite')
+          .set('Authorization', `Bearer ${token}`)
+          .expect(404);
+      });
+
+      it('deve retornar 404 se a nota não existir ao alternar favorito', async () => {
+        const nonExistingId = new Types.ObjectId().toHexString();
+        await request(app.getHttpServer())
+          .post(`/notes/${nonExistingId}/favorite`)
           .set('Authorization', `Bearer ${token}`)
           .expect(404);
       });

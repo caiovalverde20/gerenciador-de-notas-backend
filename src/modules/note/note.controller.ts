@@ -42,4 +42,10 @@ export class NoteController {
   async remove(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
     return this.noteService.remove(req.user.userId, id);
   }
+
+  @Post(':id/favorite')
+  @ApiOperation({ summary: 'Marcar uma nota como favorita' })
+  async favorite(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
+    return this.noteService.toggleFavorite(req.user.userId, id);
+  }
 }

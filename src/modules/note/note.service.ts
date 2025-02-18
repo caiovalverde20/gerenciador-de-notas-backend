@@ -15,12 +15,16 @@ export class NoteService {
     const createdNote = new this.noteModel({
       ...createNoteDto,
       user: new Types.ObjectId(userId),
+      favorite: false,
     });
     return createdNote.save();
   }
 
   async findAll(userId: string): Promise<Note[]> {
-    return this.noteModel.find({ user: new Types.ObjectId(userId) }).exec();
+    return this.noteModel
+      .find({ user: new Types.ObjectId(userId) })
+      .sort({ favorite: -1, createdAt: -1 })
+      .exec();
   }
 
   async findOne(userId: string, id: string): Promise<Note> {
@@ -64,5 +68,19 @@ export class NoteService {
       throw new NotFoundException('Nota não encontrada');
     }
     return note;
+  }
+
+  async toggleFavorite(userId: string, id: string): Promise<Note> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Nota não encontrada');
+    }
+    const note = await this.noteModel
+      .findOne({ _id: new Types.ObjectId(id), user: new Types.ObjectId(userId) })
+      .exec();
+    if (!note) {
+      throw new NotFoundException('Nota não encontrada');
+    }
+    note.favorite = !note.favorite;
+    return note.save();
   }
 }

@@ -14,6 +14,7 @@ describe('NoteService', () => {
     title: 'Test Note',
     description: 'Test Description',
     user: new Types.ObjectId(userId),
+    favorite: false,
   };
   const updateNoteDto = {
     title: 'Updated Note',
@@ -27,10 +28,13 @@ describe('NoteService', () => {
       title: data.title,
       description: data.description,
       user: new Types.ObjectId(userId),
+      favorite: data.favorite,
     }),
   }));
   noteModelMock.find = jest.fn().mockReturnValue({
-    exec: jest.fn().mockResolvedValue([mockNote]),
+    sort: jest.fn().mockReturnValue({
+      exec: jest.fn().mockResolvedValue([mockNote]),
+    }),
   });
   noteModelMock.findOne = jest.fn().mockReturnValue({
     exec: jest.fn().mockResolvedValue(mockNote),
@@ -41,6 +45,7 @@ describe('NoteService', () => {
       title: updateNoteDto.title,
       description: updateNoteDto.description,
       user: new Types.ObjectId(userId),
+      favorite: false,
     }),
   });
   noteModelMock.findOneAndDelete = jest.fn().mockReturnValue({
@@ -70,10 +75,12 @@ describe('NoteService', () => {
         title: createNoteDto.title,
         description: createNoteDto.description,
         user: expect.any(Types.ObjectId),
+        favorite: false,
       });
       expect(noteModelMock).toHaveBeenCalledWith({
         ...createNoteDto,
         user: new Types.ObjectId(userId),
+        favorite: false,
       });
     });
 
@@ -132,6 +139,7 @@ describe('NoteService', () => {
         title: updateNoteDto.title,
         description: updateNoteDto.description,
         user: expect.any(Types.ObjectId),
+        favorite: false,
       });
       expect(noteModelMock.findOneAndUpdate).toHaveBeenCalledWith(
         { _id: new Types.ObjectId(noteId), user: new Types.ObjectId(userId) },
@@ -171,6 +179,39 @@ describe('NoteService', () => {
 
     it('deve lançar NotFoundException para id inválido em remove', async () => {
       await expect(service.remove(userId, 's')).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('toggleFavorite', () => {
+    it('deve inverter o valor de favorite para uma nota existente', async () => {
+      const noteNotFavorite = { ...mockNote, favorite: false };
+      noteModelMock.find = jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue([noteNotFavorite]),
+        }),
+      });
+      noteModelMock.findOne = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue({ ...mockNote, favorite: false, save: jest.fn().mockResolvedValue({ ...mockNote, favorite: true }) }),
+      });
+      const result1 = await service.toggleFavorite(userId, noteId);
+      expect(result1.favorite).toEqual(true);
+
+      noteModelMock.findOne = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue({ ...mockNote, favorite: true, save: jest.fn().mockResolvedValue({ ...mockNote, favorite: false }) }),
+      });
+      const result2 = await service.toggleFavorite(userId, noteId);
+      expect(result2.favorite).toEqual(false);
+    });
+
+    it('deve lançar NotFoundException se a nota não for encontrada em toggleFavorite', async () => {
+      noteModelMock.findOne.mockReturnValueOnce({
+        exec: jest.fn().mockResolvedValue(null),
+      });
+      await expect(service.toggleFavorite(userId, noteId)).rejects.toThrow(NotFoundException);
+    });
+
+    it('deve lançar NotFoundException para id inválido em toggleFavorite', async () => {
+      await expect(service.toggleFavorite(userId, 's')).rejects.toThrow(NotFoundException);
     });
   });
 });

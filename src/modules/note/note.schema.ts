@@ -13,6 +13,9 @@ export class Note {
 
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
   user: Types.ObjectId;
+
+  @Prop({ default: false })
+  favorite: boolean;
 }
 
 export const NoteSchema = SchemaFactory.createForClass(Note);
