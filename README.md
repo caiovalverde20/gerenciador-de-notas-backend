@@ -1,99 +1,118 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Gerenciador de Notas
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+O **Gerenciador de Notas** é uma aplicação full-stack que permite que usuários autenticados criem, leiam, atualizem e excluam suas próprias notas. A aplicação utiliza autenticação via JWT para proteger as rotas e garantir que cada usuário só possa acessar suas próprias informações.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Front-end
+O front-end pode ser encontrado nesse repositório:
+[https://github.com/caiovalverde20/gerenciador-de-notas-frontend](https://github.com/caiovalverde20/gerenciador-de-notas-frontend)
 
-## Description
+## Tecnologias Utilizadas
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **NestJS** – Framework para construção do backend
+- **MongoDB** – Banco de dados NoSQL (utilizando Mongoose)
+- **Swagger** – Documentação interativa da API
+- **Docker** – Facilita o deploy e o desenvolvimento local
 
-## Project setup
+## Deploy
 
-```bash
-$ npm install
-```
+A aplicação está disponível no Render:
 
-## Compile and run the project
+[https://notas-backend-wa1c.onrender.com](https://notas-backend-wa1c.onrender.com)
 
-```bash
-# development
-$ npm run start
+A documentação Swagger pode ser acessada em:
 
-# watch mode
-$ npm run start:dev
+[https://notas-backend-wa1c.onrender.com/docs](https://notas-backend-wa1c.onrender.com/docs)
 
-# production mode
-$ npm run start:prod
-```
+## Variáveis de Ambiente
 
-## Run tests
+O projeto foi feito de forma que o .env seja opcional, apenas o MongoURI se não estiver utilizando Docker.
+O backend possui as seguintes variáveis de ambiente:
 
-```bash
-# unit tests
-$ npm run test
+- **MONGO_URI**: Exemplo de string de conexão para o MongoDB Atlas:
+  ```
+  mongodb+srv://user:<password>@cluster0.cqirz.mongodb.net/prod?retryWrites=true&w=majority
+  ```
+- **JWT_SECRET**: Chave secreta para geração e validação de JWT (ex.: `secret`).
+- **PORT**: Porta em que a aplicação irá escutar (Render define automaticamente, mas pode ser, por exemplo, `3000`).
+- **NODE_OPTIONS**: Opcional, para aumentar o limite de memória, por exemplo:
+  ```
+  --max_old_space_size=512
+  ```
 
-# e2e tests
-$ npm run test:e2e
+## Como Executar o Projeto
 
-# test coverage
-$ npm run test:cov
-```
+### Com Docker
 
-## Deployment
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/seu-usuario/gerenciador-de-notas.git
+   cd gerenciador-de-notas
+   ```
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+2. **Crie um arquivo `.env` na raiz do projeto** (opcional) com as variáveis de ambiente descritas acima.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+3. **Construa e inicie os containers:**
+   ```bash
+   docker-compose up --build
+   ```
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+4. **Acesse a aplicação:**
+   - API: [http://localhost:3000](http://localhost:3000)
+   - Documentação Swagger: [http://localhost:3000/docs](http://localhost:3000/docs)
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Sem Docker
 
-## Resources
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/seu-usuario/gerenciador-de-notas.git
+   cd gerenciador-de-notas
+   ```
 
-Check out a few resources that may come in handy when working with NestJS:
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+3. **Crie um arquivo `.env` na raiz do projeto** com as variáveis de ambiente.
 
-## Support
+4. **Compile e inicie a aplicação:**
+   ```bash
+   npm run build
+   npm run start:prod
+   ```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+5. **Acesse a API e a documentação:**
+   - API: [http://localhost:3000](http://localhost:3000)
+   - Swagger: [http://localhost:3000/docs](http://localhost:3000/docs)
 
-## Stay in touch
+## Endpoints Principais
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Autenticação
+- `POST /auth/signup` – Registra um novo usuário (email, senha e nome).
+- `POST /auth/login` – Realiza login e retorna um token JWT válido por 1 hora.
+- `GET /user` – Retorna os dados do usuário autenticado.
 
-## License
+### Notas
+- `POST /notes` – Cria uma nova nota (título obrigatório e descrição opcional).
+- `GET /notes` – Lista todas as notas do usuário.
+- `GET /notes/:id` – Retorna uma nota específica.
+- `PATCH /notes/:id` – Atualiza uma nota.
+- `DELETE /notes/:id` – Exclui uma nota.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+> **Observação:** Cada usuário só pode criar, atualizar e excluir suas próprias notas. Tentativas de acessar notas de outros usuários resultarão em um erro 404.
+
+## Testes Automatizados
+
+- **Testes Unitários:**
+  ```bash
+  npm run test
+  ```
+- **Testes de Integração (E2E):**
+  ```bash
+  npm run test:e2e
+  ```
+
+## Documentação da API
+
+A documentação interativa (Swagger) está disponível em:
+[https://notas-backend-wa1c.onrender.com/docs](https://notas-backend-wa1c.onrender.com/docs)
